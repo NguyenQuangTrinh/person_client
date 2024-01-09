@@ -1,12 +1,11 @@
 import { PayloadAction, createSlice } from '@reduxjs/toolkit'
 
 interface Message{
-    join: string,
-    idUser: string,
-    message: string
-    data: {
-        idRoom: string,
-    }
+    id: string,
+    userId: string,
+    content: string,
+    messagerId: string,
+    createAt: string
 }
 
 export interface CounterState {

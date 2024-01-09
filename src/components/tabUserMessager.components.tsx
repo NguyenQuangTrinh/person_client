@@ -1,14 +1,21 @@
+import { useNavigate, useParams } from "react-router-dom"
 
 interface TabUserMessagerInterface {
     time: string,
     name: string,
+    id: string,
     lastMessage: string,
-    messageUnread: number
+    messageUnread: number,
+    room: string
 }
 
 export default function TabUserMessagerComponent(tab: TabUserMessagerInterface) {
+
+    const navigate = useNavigate();
+    const {id} = useParams();
+
     return (
-        <div className="relative flex flex-row items-center p-4">
+        <div onClick={()=> navigate(`${tab.id}/${tab.room}`)} className={`relative ${tab.id == id ? 'bg-slate-200' : ""} flex flex-row items-center p-4 cursor-pointer hover:bg-slate-300`}>
             <div className="absolute text-xs text-gray-500 right-0 top-0 mr-4 mt-3">{tab.time} min</div>
             <div className="flex items-center justify-center h-10 w-10 rounded-full bg-pink-500 text-pink-300 font-bold flex-shrink-0">
                 T

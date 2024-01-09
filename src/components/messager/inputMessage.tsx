@@ -1,11 +1,27 @@
 import { useState } from "react"
+import { ws } from "../../reduxSaga/socket.saga";
+import { useSelector } from "react-redux";
+import { RootState } from "../../redux/store";
+import { useParams } from "react-router-dom";
 
-interface inputMessage{
-    sendMessage: Function
-}
-export default function InputMessage(input: inputMessage) {
+
+export default function InputMessage() {
 
     const [message, setMessage] = useState<string>("");
+    const user = useSelector((state: RootState) => state.user.value);
+    const {id, room} = useParams();
+
+
+    function sendMessage(txt: string) {
+        ws.send(JSON.stringify({
+            type: "MESSAGE",
+            userId: user?.id,
+            sendTo: id,
+            content: txt,
+            room: room
+        })) 
+        setMessage("");
+    }
 
     return (
         <div className="flex flex-row items-center">
@@ -23,8 +39,8 @@ export default function InputMessage(input: inputMessage) {
                     </svg>
                 </button>
                 <div className="w-full">
-                    <input onChange={(e)=> setMessage(e.target.value)} type="text"
-                        onKeyUp={(e) => e.key == "Enter" && message !== "" && input.sendMessage(message)}
+                    <input value={message} onChange={(e)=> setMessage(e.target.value)} type="text"
+                        onKeyUp={(e) => e.key == "Enter" && message !== "" && sendMessage(message)}
                         className="border border-transparent w-full focus:outline-none text-sm h-10 flex items-center" placeholder="Type your message...." />
                 </div>
                 <div className="flex flex-row">
@@ -55,7 +71,7 @@ export default function InputMessage(input: inputMessage) {
                 </div>
             </div>
             <div className="ml-6">
-                <button onClick={() => message !== "" && input.sendMessage(message)} className="flex items-center justify-center h-10 w-10 rounded-full bg-gray-200 hover:bg-gray-300 text-indigo-800 text-white">
+                <button onClick={() => message !== "" && sendMessage(message)} className="flex items-center justify-center h-10 w-10 rounded-full bg-gray-200 hover:bg-gray-300 text-indigo-800 text-white">
                     <svg className="w-5 h-5 transform rotate-90 -mr-px"
                         fill="none"
                         stroke="currentColor"

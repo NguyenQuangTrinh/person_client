@@ -1,56 +1,57 @@
-import { useEffect, useState } from "react";
-import { ListMessageComponent } from "../components/messager/listMessage.components";
+import { useEffect } from "react";
 import TabUserMessagerComponent from "../components/tabUserMessager.components";
-import useWebSocket from "react-use-websocket";
-import { useDispatch } from "react-redux";
-import { addNewMessage } from "../redux/messager/messager.reducer";
+import { RootState } from "../redux/store";
+import { Outlet } from "react-router-dom";
+import { useSelector } from "react-redux";
+// import { connectWebSocket } from "../reduxSaga/socket.saga";
 
-const WS_URL = 'ws://127.0.0.1:3000/ws';
+const WS_URL = 'ws://localhost:3000/ws';
 export default function MessagerPage() {
 
-    const dispath = useDispatch();
+    const user = useSelector((state: RootState) => state.user.value);
 
-    const { sendJsonMessage, lastJsonMessage }: any = useWebSocket(WS_URL, {
-        onOpen: () => {
-            console.log('WebSocket connection established.');
-        }
-    });
 
     useEffect(() => {
-        sendJsonMessage({
-            type: "join",
-            idUser: "123",
-            message: "",
-            data: {
-                idRoom: "123",
-            }
-        })
-        console.log(lastJsonMessage);
+        // dispath(connectWebSocket());
     }, [])
 
-    useEffect(() => {   
-        console.log(lastJsonMessage);
-        if(lastJsonMessage?.message.type == "message"){
-            dispath(addNewMessage(lastJsonMessage.message))
-        }
+    // const { sendJsonMessage,readyState ,lastJsonMessage }: any = useWebSocket(WS_URL, {
+    //     onOpen: () => {
+    //         console.log('WebSocket connection established.');
+    //     },
 
-    }, [lastJsonMessage])
+    //     onError: (e) => {
+    //         console.log(e);
+    //     }
+    // });
 
-    function sendMessage(txt: string) {
-        sendJsonMessage({
-            type: "message",
-            idUser: "123",
-            message: txt,
-            data: {
-                idRoom: "123",
-            }
-        })
-    }
+    // useEffect(() => {
+    //     console.log(readyState);
+    //     sendJsonMessage({
+    //         type: "join",
+    //         idUser: user?.id,
+    //         message: "",
+    //         data: {
+    //             idRoom: user?.id,
+    //         }
+    //     })
+    //     console.log(lastJsonMessage);
+    // }, [])
+
+    // useEffect(() => {   
+    //     console.log(lastJsonMessage);
+    //     if(lastJsonMessage?.message.type == "message"){
+    //         dispath(addNewMessage(lastJsonMessage.message))
+    //     }
+
+    // }, [lastJsonMessage])
+
+   
 
     return (
         <div className="flex flex-row h-screen antialiased text-gray-800">
             <div className="flex flex-row w-96 flex-shrink-0 bg-gray-100 p-4">
-               {/* menu messager */}
+                {/* menu messager */}
                 <div className="flex flex-col w-full h-full pl-4 pr-4 py-4 -mr-4">
                     <div className="flex flex-row items-center">
                         <div className="flex flex-row items-center">
@@ -100,9 +101,11 @@ export default function MessagerPage() {
                     </div>
                     <div className="mt-2">
                         <div className="flex flex-col -mx-4">
-                            <TabUserMessagerComponent time="5" messageUnread={0} name="Trinh" lastMessage="Demo" />
-                            <TabUserMessagerComponent time="5" messageUnread={0} name="Trinh" lastMessage="Demo" />
-
+                            {
+                                user?.listfriends.map((item, index) => {
+                                    return <TabUserMessagerComponent id={item.friend.id} key={index} time="5" messageUnread={0} name={item.friend.name} lastMessage="" room={item.room} />
+                                })
+                            }
                         </div>
                     </div>
                     <div className="mt-5">
@@ -129,7 +132,7 @@ export default function MessagerPage() {
                     </div>
                 </div>
             </div>
-            <ListMessageComponent sendMessage={sendMessage}/>
+            <Outlet/>
         </div>
     )
 }

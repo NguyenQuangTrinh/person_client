@@ -4,19 +4,20 @@ import { ActionSaga } from "./actionSaga";
 import HookAPI from "../utils/HookApi";
 import { POST } from "../utils/method.httprequest";
 import Cookies from 'js-cookie';
-import { redirect } from "react-router-dom";
+import { createBrowserRouter } from "react-router-dom";
 
 export interface Login{
     user: any,
     history: any
 }
 
+
 function* watchLoginSagaAsync(action: PayloadAction<Login>){
     const [result, error] = yield call(HookAPI, "user/login", action.payload.user, POST);
     if(result){
         
         Cookies.set("_person_token",result.jwts, {expires: result.profile.exp});
-        redirect("/");
+        action.payload.history("/")
     }else if(error){
         console.log(error);
     }

@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 export default function TabsComponent() {
     return (
 
-        <div>
+        <div >
             <div className="sm:hidden">
                 <label htmlFor="Tab" className="sr-only">Tab</label>
 

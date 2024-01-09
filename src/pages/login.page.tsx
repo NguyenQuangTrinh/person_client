@@ -1,12 +1,13 @@
 import { useState } from "react";
 import { useDispatch } from "react-redux";
-import { Link } from "react-router-dom";
+import { Link, useNavigate, useRoutes } from "react-router-dom";
 import { ActionSaga } from "../reduxSaga/actionSaga";
 
 export function LoginPage() {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const dispath = useDispatch();
+    const history = useNavigate();
 
     function LoginUser(){
         dispath({
@@ -16,7 +17,7 @@ export function LoginPage() {
                     email: email,
                     password: password
                 },
-                history: null
+                history: history
             }
         })
     }
